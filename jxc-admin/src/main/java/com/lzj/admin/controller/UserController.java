@@ -49,15 +49,29 @@ public class UserController {
     @RequestMapping("login")
     @ResponseBody
     public RespBean login(String userName, String password, HttpSession session){
+      try
+      {
+
+
         User user = userService.login(userName,password);
         session.setAttribute("user",user);
         return RespBean.success("用户登录成功!");
+      }catch (ParamsException e)
+      {
+          e.printStackTrace();
+         return  RespBean.error(e.getMsg());
+      }
+      catch (Exception e)
+      {
+          e.printStackTrace();
+          return  RespBean.error("登录失败");
+      }
     }
 
 
 
     /**
-     * 用户信息设置页面
+     * 用户信息设置页面转到基本信息页面
      * @return
      */
     @RequestMapping("setting")

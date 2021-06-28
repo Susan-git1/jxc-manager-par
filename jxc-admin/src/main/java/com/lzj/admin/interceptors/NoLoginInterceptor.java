@@ -9,9 +9,11 @@ import javax.servlet.http.HttpServletResponse;
 /**
  * 乐字节  踏实教育 用心服务
  *
+ * 拦截器
  * @author 乐字节--老李
  * @version 1.0
  */
+//SpringWebMVC的处理器拦截器     类似于Servlet开发中的过滤器Filter，用于处理器进行预处理和后处理。
 public class NoLoginInterceptor  implements HandlerInterceptor {
 
     @Override

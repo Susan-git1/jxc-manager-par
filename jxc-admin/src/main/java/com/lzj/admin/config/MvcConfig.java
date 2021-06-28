@@ -12,18 +12,20 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter
  * @author 乐字节--老李
  * @version 1.0
  */
+//生效拦截器
 @Configuration
 public class MvcConfig extends WebMvcConfigurerAdapter {
 
     @Bean
     public NoLoginInterceptor noLoginInterceptor(){
+
         return new NoLoginInterceptor();
     }
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(noLoginInterceptor())
-                .addPathPatterns("/**")
+                .addPathPatterns("/**")//拦截所有资源
                 .excludePathPatterns("/index","/user/login",
                         "/css/**","/error/**","/images/**","/js/**","/lib/**");
     }

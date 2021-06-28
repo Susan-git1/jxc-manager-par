@@ -6,7 +6,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 /**
  * 乐字节  踏实教育 用心服务
- *
+ *扫描持久层的接口
  * @author 乐字节--老李
  * @version 1.0
  */

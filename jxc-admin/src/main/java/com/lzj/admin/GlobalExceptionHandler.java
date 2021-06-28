@@ -12,10 +12,12 @@ import org.springframework.web.bind.annotation.ResponseBody;
  * @author 乐字节--老李
  * @version 1.0
  */
+//springmvc全局异常处理
 @ControllerAdvice
 public class GlobalExceptionHandler {
 
 
+    //参数异常处理  指定处理的异常
     @ExceptionHandler(ParamsException.class)
     @ResponseBody
     public RespBean paramsExceptionHandler(ParamsException e){

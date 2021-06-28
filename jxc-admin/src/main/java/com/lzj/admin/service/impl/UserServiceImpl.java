@@ -24,8 +24,10 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
 
     @Override
     public User login(String userName, String password) {
+        //断言的方法
         AssertUtil.isTrue(StringUtil.isEmpty(userName),"用户名不能为空!");
         AssertUtil.isTrue(StringUtil.isEmpty(password),"密码不能为空!");
+
         User user = this.findUserByUserName(userName);
         AssertUtil.isTrue(null == user,"该用户记录不存在或已注销!");
         /**
@@ -35,12 +37,25 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
         return user;
     }
 
+    /**
+     * 根据用户名来查找，用户名唯一
+     * @param userName
+     * @return
+     */
     @Override
     public User findUserByUserName(String userName) {
+        /**
+         * 根据wrapper条件查询一条记录
+         * 查询用户中没有删除的用户
+         * QueryWrapper 是mybatis  plus中实现查询的实体类对象封装操作类
+         */
+
         return this.baseMapper.selectOne(new QueryWrapper<User>().eq("is_del",0).eq("user_name",userName));
     }
 
     @Override
+    //用在接口实现类 Spring AOP的本质决定此注解用在public方法上
+    //sql的事务  ropagation.REQUIRED   支持当前事务，如果当前没有事务，就新建一个事务rollbackFor  回调，在出现异常时进行事务回调
     @Transactional(propagation = Propagation.REQUIRED,rollbackFor = Exception.class)
     public void updateUserInfo(User user) {
         /**
@@ -53,6 +68,8 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
         AssertUtil.isTrue(null !=temp && !(temp.getId().equals(user.getId())),"用户名已存在!");
         AssertUtil.isTrue(!(this.updateById(user)),"用户信息更新失败!");
     }
+
+
 
     @Override
     @Transactional(propagation = Propagation.REQUIRED,rollbackFor = Exception.class)

@@ -14,14 +14,6 @@ public interface IUserService extends IService<User> {
 
 
     /**
-     * 用户登录方法
-     * @param userName
-     * @param password
-     * @return
-     */
-    User login(String userName, String password);
-
-    /**
      * 根据用户名查询用户记录
      * @param userName
      * @return

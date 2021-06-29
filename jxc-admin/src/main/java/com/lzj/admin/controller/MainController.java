@@ -44,13 +44,5 @@ public class MainController {
     }
 
 
-    /**
-     * 用户退出
-     * @return
-     */
-    @RequestMapping("signout")
-    public String signout(HttpSession session){
-        session.removeAttribute("user");
-        return "redirect:index";
-    }
+
 }

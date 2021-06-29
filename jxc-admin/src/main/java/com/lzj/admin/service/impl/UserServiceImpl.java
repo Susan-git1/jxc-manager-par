@@ -7,9 +7,12 @@ import com.lzj.admin.service.IUserService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.lzj.admin.utils.AssertUtil;
 import com.lzj.admin.utils.StringUtil;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+
+import javax.annotation.Resource;
 
 /**
  * <p>
@@ -22,20 +25,9 @@ import org.springframework.transaction.annotation.Transactional;
 public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IUserService {
 
 
-    @Override
-    public User login(String userName, String password) {
-        //断言的方法
-        AssertUtil.isTrue(StringUtil.isEmpty(userName),"用户名不能为空!");
-        AssertUtil.isTrue(StringUtil.isEmpty(password),"密码不能为空!");
-
-        User user = this.findUserByUserName(userName);
-        AssertUtil.isTrue(null == user,"该用户记录不存在或已注销!");
-        /**
-         * 后续引入SpringSecurity 使用框架处理密码
-         */
-        AssertUtil.isTrue(!(user.getPassword().equals(password)),"密码错误!");
-        return user;
-    }
+    //注入Springsecurity中生成密码加密的方法
+    @Resource
+    private PasswordEncoder passwordEncoder;
 
     /**
      * 根据用户名来查找，用户名唯一
@@ -63,8 +55,8 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
          *    非空
          *    唯一
          */
-        AssertUtil.isTrue(StringUtil.isEmpty(user.getUserName()),"用户名不能为空!");
-        User temp = this.findUserByUserName(user.getUserName());
+        AssertUtil.isTrue(StringUtil.isEmpty(user.getUsername()),"用户名不能为空!");
+        User temp = this.findUserByUserName(user.getUsername());
         AssertUtil.isTrue(null !=temp && !(temp.getId().equals(user.getId())),"用户名已存在!");
         AssertUtil.isTrue(!(this.updateById(user)),"用户信息更新失败!");
     }
@@ -86,10 +78,11 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
         AssertUtil.isTrue(StringUtil.isEmpty(oldPassword),"请输入原始密码!");
         AssertUtil.isTrue(StringUtil.isEmpty(newPassword),"请输入新密码!");
         AssertUtil.isTrue(StringUtil.isEmpty(confirmPassword),"请输入确认密码!");
-        AssertUtil.isTrue(!(user.getPassword().equals(oldPassword)),"原始密码输入错误!");
+      //不能使用明文比对  加密的密码比对matches(明文，密文)
+        AssertUtil.isTrue(!(passwordEncoder.matches(oldPassword,user.getPassword())),"原始密码输入错误!");
         AssertUtil.isTrue(!(newPassword.equals(confirmPassword)),"新密码输入不一致!");
         AssertUtil.isTrue(newPassword.equals(oldPassword),"新密码与原始密码不能一致!");
-        user.setPassword(newPassword);
+        user.setPassword(passwordEncoder.encode(oldPassword));
         AssertUtil.isTrue(!(this.updateById(user)),"用户密码更新失败!");
 
     }
